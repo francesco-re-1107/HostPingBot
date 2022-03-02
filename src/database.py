@@ -117,7 +117,7 @@ class Db:
         return Watchdog.get_or_none(Watchdog.uuid == uuid)
 
     def get_watchdogs_for_user(self, chat_id) -> list[Watchdog]:
-        return Watchdog.select().where(Watchdog.chat_id == chat_id)
+        return Watchdog.select().where(Watchdog.chat_id == chat_id).order_by(Watchdog.name.asc())
 
     def has_reached_limits(self, chat_id):
         return Watchdog.select().where(Watchdog.chat_id == chat_id).count() >= Configuration.WATCHDOGS_LIMIT_FOR_USER
