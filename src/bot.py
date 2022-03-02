@@ -17,11 +17,13 @@ import os
 logger = get_logger()
 bot_loop: asyncio.BaseEventLoop = None
 
+# Watchdog creation form FSM states
 class WatchdogCreation(StatesGroup):
     name = State()
     type = State()
     address = State()
 
+# Watchdog deletion form FSM states
 class WatchdogDeletion(StatesGroup):
     select = State()
 
@@ -41,6 +43,9 @@ class MainBot:
         self.__register_handlers()
 
     def __register_handlers(self):
+        """
+        Register endpoints for the Telegram bot
+        """
         self.__dp.register_message_handler(
             self.__send_welcome, 
             commands=['start', 'help']
@@ -51,7 +56,6 @@ class MainBot:
             IsAdmin(), 
             commands=['stats']
         )
-
 
         self.__dp.register_message_handler(
             self.__list_watchdogs,
@@ -195,13 +199,14 @@ class MainBot:
         watchdogs = self.__db.get_watchdogs_for_user(chat_id=message.chat.id)
 
         if len(watchdogs) == 0:
-            await message.answer("You have no watchdogs")
+            await message.answer("You have no watchdogs", reply_markup=Markups.default_markup)
             return
 
+        list_markup.add(Strings.CANCEL)
+        
         for w in watchdogs:
             list_markup.add(w.name)
 
-        list_markup.add(Strings.CANCEL)
 
         await WatchdogDeletion.select.set()
 
@@ -232,8 +237,9 @@ class MainBot:
                     logger.debug(f"Created {w}")
                     
                     await message.answer(f"Created watchdog {w.name}\n\nMake a POST request to\n<code>{Configuration.BASE_URL}/update/{str(w.uuid)}</code> every 2 minutes", reply_markup=Markups.default_markup, parse_mode='HTML')
+                
                 except WatchdogsLimitExceededException:
-                    await message.answer(f"You've rechead watchdogs number limit (5)\n", reply_markup=Markups.default_markup)
+                    await message.answer(f"You've rechead watchdogs number limit ({Configuration.WATCHDOGS_LIMIT_FOR_USER})\n", reply_markup=Markups.default_markup)
             
             # reset state
             await state.finish()

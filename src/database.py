@@ -88,6 +88,9 @@ class Db:
         Watchdog.delete().where(Watchdog.chat_id == chat_id, Watchdog.name == name).execute()
 
     def get_new_offline_hosts(self):
+        """
+        Used by push_server to check which hosts didn't post updates for check_interval seconds  
+        """
         offline_hosts = Watchdog.select().where(
             (int(round(datetime.now().timestamp())) - Watchdog.last_update) > Watchdog.check_interval,
             Watchdog.is_enabled == True,
@@ -101,14 +104,14 @@ class Db:
         return offline_hosts
 
     def get_hosts_to_ping(self) -> list[Watchdog]:
+        """
+        Used by pinger to get the polling wa
+        """
         return list(Watchdog.select().where(
             Watchdog.is_enabled == True,
             Watchdog.is_push == False,
         ).execute())
     
-    def set_watchdogs_offline(self, offline_hosts):
-        #set is_offline to True
-        return Watchdog.update(is_offline=True).where(Watchdog.uuid.in_([w.uuid for w in offline_hosts])).execute() is not None
 
     def get_watchdog(self, uuid):
         return Watchdog.get_or_none(Watchdog.uuid == uuid)
@@ -120,11 +123,21 @@ class Db:
         return Watchdog.select().where(Watchdog.chat_id == chat_id).count() >= Configuration.WATCHDOGS_LIMIT_FOR_USER
 
     def is_name_duplicated(self, name, chat_id):
+        """
+        Check if name is duplicated within same user
+        """
         return Watchdog.select().where(Watchdog.chat_id == chat_id and Watchdog.name == name).count() > 0
 
     def push_update(self, uuid):
         return Watchdog.update(last_update=datetime.now(), is_offline=False).where(Watchdog.uuid == uuid).execute() is not None
     
+    def set_watchdogs_offline(self, offline_hosts):
+        """
+        Set is_offline to True
+        Used by pinger
+        """
+        return Watchdog.update(is_offline=True).where(Watchdog.uuid.in_([w.uuid for w in offline_hosts])).execute() is not None
+
     def set_watchdog_online(self, watchdog):
         return Watchdog.update(is_offline=False).where(Watchdog.uuid == watchdog.uuid).execute() is not None
     
@@ -132,5 +145,6 @@ class Db:
         return f"Users: {Watchdog.select(Watchdog.chat_id).distinct().count()}\nWatchdogs: {Watchdog.select().count()}\nPing watchdogs: {Watchdog.select().where(Watchdog.is_push == False).count()}\nPush watchdogs: {Watchdog.select().where(Watchdog.is_push == True).count()}"
     
 
+#create tables if they don't exist
 db.create_tables([Watchdog])
 logger.info("Connected")
