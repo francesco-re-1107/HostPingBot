@@ -126,7 +126,7 @@ class Db:
         """
         Check if name is duplicated within same user
         """
-        return Watchdog.select().where(Watchdog.chat_id == chat_id and Watchdog.name == name).count() > 0
+        return Watchdog.select().where(Watchdog.chat_id == chat_id, Watchdog.name == name).count() > 0
 
     def push_update(self, uuid):
         return Watchdog.update(last_update=datetime.now(), is_offline=False).where(Watchdog.uuid == uuid).execute() is not None
