@@ -54,6 +54,7 @@ class Db:
             name=name, 
             is_push=True,
             is_enabled=True,
+            last_update=datetime.now(),
             chat_id=chat_id
         )
 
@@ -73,6 +74,7 @@ class Db:
             is_push=False,
             address=address, 
             is_enabled=True,
+            last_update=datetime.now(),
             chat_id=chat_id
         )
 
