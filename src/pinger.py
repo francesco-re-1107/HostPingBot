@@ -6,6 +6,7 @@ from threading import Thread
 from utils import get_logger
 from database import Db
 from bot import MainBot
+import os
 
 logger = get_logger()
 
@@ -28,14 +29,18 @@ class Pinger:
         logger.debug(f"Scheduled ping every {self.__interval} seconds")
         
         while True:
-            start_time = datetime.now()
-            self.__ping_hosts()
-            total_seconds = (datetime.now() - start_time).total_seconds()
-            logger.debug(f"Took {total_seconds} seconds to ping")
-            
-            left_waiting_time = max(0, self.__interval - total_seconds)
-            time.sleep(left_waiting_time)
-
+            try:
+                start_time = datetime.now()
+                self.__ping_hosts()
+                total_seconds = (datetime.now() - start_time).total_seconds()
+                logger.debug(f"Took {total_seconds} seconds to ping")
+                
+                left_waiting_time = max(0, self.__interval - total_seconds)
+                time.sleep(left_waiting_time)
+            except Exception as e:
+                logger.error("Error in pinger")
+                logger.error(e)
+                os._exit(1)
 
     def __ping_hosts(self):
         logger.debug("Running ping")

@@ -42,7 +42,7 @@ def get_logger():
     if Configuration.LOGS_PATH:
         # log to file
         file_handler = logging.FileHandler(
-            Configuration.LOGS_PATH + "/main.log"
+            os.path.join(Configuration.LOGS_PATH, "main.log")
         )
         file_handler.setFormatter(formatter)
         __logger.addHandler(file_handler)

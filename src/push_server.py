@@ -61,16 +61,21 @@ class PushServer():
         logger.debug(f"Scheduled check every {self.__check_interval} seconds")
         
         while True:
-            self.__check_updates()
-            time.sleep(self.__check_interval)
-            
+            try:
+                self.__check_updates()
+                time.sleep(self.__check_interval)
+            except Exception as e:
+                logger.error("Error checking push server updates")
+                logger.error(e)
+                os._exit(1)
 
     def __start_server(self):
         try:
             logger.info("Starting")
             serve(self.__app, host="0.0.0.0", port=Configuration.PUSH_SERVER_PORT)
         except Exception as e:
-            logger.error(f"Cannot start: {e}")
+            logger.error(f"Error starting push server: {e}")
+            logger.error(e)
             os._exit(1)
 
     def start(self):
