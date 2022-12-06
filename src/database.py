@@ -13,14 +13,11 @@ db = PostgresqlDatabase(
     'hostpingbot',  # Required by Peewee.
     host=Configuration.DATABASE_HOST,
     user=Configuration.DATABASE_USER,
-    password=Configuration.DATABASE_PASSWORD
+    password=Configuration.DATABASE_PASSWORD,
+    thread_safe=True,
+    autorollback=True,
+    autoconnect=True,
 )
-
-# class User(Model):
-#     id = IntegerField(primary_key=True) #chat id
-
-#     class Meta:
-#         database = db
 
 class Watchdog(Model):
     
@@ -35,7 +32,7 @@ class Watchdog(Model):
     last_update = TimestampField(default=datetime.now())
     check_interval = IntegerField(default=120) # in seconds or IntervalField() from peewee postgres extension
     is_offline = BooleanField(default=False)
-    chat_id = IntegerField(null=False)
+    chat_id = BigIntegerField(null=False)
 
     def __str__(self):
         return f"<{self.uuid}, {self.name}>"

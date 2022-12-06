@@ -152,7 +152,7 @@ class MainBot:
         """
         This handler will be called when user sends `/start` or `/help` command
         """
-        await message.answer(Strings.WELCOME_MESSAGE, reply_markup=Markups.default_markup)
+        await message.answer(Strings.WELCOME_MESSAGE, parse_mode="HTML", reply_markup=Markups.default_markup)
     
     async def __send_stats(self, message: types.Message):
         """
@@ -259,6 +259,7 @@ class MainBot:
             data['address'] = message.text
         
         try:
+            logger.debug(f"Creating watchdog with name {data['name']} and address {data['address']} for user {message.chat.id}")
             w = self.__db.add_ping_watchdog(data['name'], data['address'], message.chat.id)
             
             logger.debug(f"Created {w}")

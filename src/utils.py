@@ -18,6 +18,9 @@ def get_logger():
     if __logger:
         return __logger
     
+    #set libraries loggers format
+    logging.basicConfig(format="%(asctime)s [%(levelname)s] %(module)s: %(message)s")
+
     __logger = logging.getLogger("hostpingbot")
     __logger.propagate = False
     
