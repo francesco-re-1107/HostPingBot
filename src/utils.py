@@ -4,11 +4,8 @@ from logging.handlers import RotatingFileHandler
 import os
 import sys
 import socket
-import re
 from uuid import uuid4, UUID
 from configuration import Configuration
-
-ip_address_regex = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
 
 __logger = None 
 
@@ -70,13 +67,16 @@ def is_valid_uuid4(uuid_string):
 
 def dns_resolves(hostname):
     try:
-        socket.gethostbyname(hostname)
-        return True
-    except socket.error:
+        ip = ip_address(socket.gethostbyname(hostname))
+        return not ip.is_private #for hostnames like localhost
+    except socket.error: #dns error
+        return False
+    except ValueError: #the returned ip is not valid
         return False
     
 def is_valid_address(address):
-    if re.match(ip_address_regex, address): #it's an ip address
-        return True
-    
-    return dns_resolves(address) # it's an hostname
+    try:
+        ip = ip_address(address) # it's an ip address
+        return not ip.is_private #private ips are not allowed
+    except ValueError:
+        return dns_resolves(address) # it's a hostname
