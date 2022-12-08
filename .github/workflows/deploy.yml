@@ -26,7 +26,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
 
       - name: Check out the source
-        run: ssh oracle 'cd hostpingbot && git fetch && git reset --hard origin/master'
+        run: ssh oracle 'cd hostpingbot && git fetch && git reset --hard origin/main'
 
       - name: Restart the bot
         run: ssh oracle 'sudo service hostpingbot restart'
