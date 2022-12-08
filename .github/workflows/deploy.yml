@@ -1,0 +1,32 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: "Deploy to oracle server"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/oracle.key
+          chmod 600 ~/.ssh/oracle.key
+          cat >>~/.ssh/config <<END
+          Host oracle
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/oracle.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+
+      - name: Check out the source
+        run: ssh oracle 'cd hostpingbot && git fetch && git reset --hard origin/master'
+
+      - name: Restart the server
+        run: ssh oracle 'sudo service hostpingbot restart'
