@@ -1,6 +1,8 @@
 # HostPingBot
 This is a Telegram bot for detecting down hosts.
 
+[![Deploy](https://github.com/francesco-re-1107/HostPingBot/actions/workflows/deploy.yml/badge.svg)](https://github.com/francesco-re-1107/HostPingBot/actions/workflows/deploy.yml)
+
 https://t.me/HostPingBot
 
 ## Requirements
