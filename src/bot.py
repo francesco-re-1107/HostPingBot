@@ -132,7 +132,7 @@ class MainBot:
         )
 
     def notify_offline_host(self, watchdog):
-        self.__send_message_to_user(watchdog.chat_id, f"🔴 {watchdog.name} is OFFLINE right now")
+        self.__send_message_to_user(watchdog.chat_id, Strings.OFFLINE_MESSAGE(watchdog.name))
 
     def notify_offline_hosts(self, watchdogs):
         for w in watchdogs:
@@ -144,9 +144,9 @@ class MainBot:
             
             down_for = time_delta_to_string(total_seconds)
             
-            self.__send_message_to_user(watchdog.chat_id, f"🟢 {watchdog.name} is back ONLINE\n\nIt\'s been down for {down_for}")
+            self.__send_message_to_user(watchdog.chat_id, Strings.ONLINE_MESSAGE_WITH_TIME(watchdog.name, down_for))
         else:
-            self.__send_message_to_user(watchdog.chat_id, f"🟢 {watchdog.name} is back ONLINE")
+            self.__send_message_to_user(watchdog.chat_id, Strings.ONLINE_MESSAGE(watchdog.name))
 
 
     async def __send_welcome(self, message: types.Message):
@@ -168,7 +168,7 @@ class MainBot:
         watchdogs_list = self.__db.get_watchdogs_for_user(chat_id=message.chat.id)
 
         if len(watchdogs_list) == 0:
-            await message.answer("You have no watchdogs", reply_markup=Markups.default_markup)
+            await message.answer(Strings.NO_WATCHDOGS, reply_markup=Markups.default_markup)
             return
 
         summary = "Here you can find your watchdogs\n\n"
@@ -186,13 +186,14 @@ class MainBot:
         This handler will be called when user sends `/new` command
         """
         if self.__db.has_reached_limits(chat_id=message.chat.id):
-            await message.answer(f"You've rechead watchdogs number limit ({Configuration.WATCHDOGS_LIMIT_FOR_USER})", reply_markup=Markups.default_markup)
+            limit = Configuration.WATCHDOGS_LIMIT_FOR_USER
+            await message.answer(Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit), reply_markup=Markups.default_markup)
             return
 
         # set state
         await WatchdogCreation.name.set()
 
-        await message.answer("Please input a name", reply_markup=Markups.cancel_markup)
+        await message.answer(Strings.INPUT_NAME, reply_markup=Markups.cancel_markup)
 
     async def __delete_watchdog(self, message: types.Message):
         list_markup = Markups.new()
@@ -200,7 +201,7 @@ class MainBot:
         watchdogs = self.__db.get_watchdogs_for_user(chat_id=message.chat.id)
 
         if len(watchdogs) == 0:
-            await message.answer("You have no watchdogs", reply_markup=Markups.default_markup)
+            await message.answer(Strings.NO_WATCHDOGS, reply_markup=Markups.default_markup)
             return
 
         list_markup.add(Strings.CANCEL)
@@ -211,23 +212,23 @@ class MainBot:
 
         await WatchdogDeletion.select.set()
 
-        await message.answer(f"Select which watchdog you'd like to delete", reply_markup=list_markup)
+        await message.answer(Strings.INPUT_DELETE_WATCHDOG, reply_markup=list_markup)
     
     async def __delete_selected_watchdog(self, message: types.Message, state: FSMContext):
         self.__db.delete_watchdog_for_user(chat_id=message.chat.id, name=message.text)
 
         await state.finish()
 
-        await message.answer(f"Deleted watchdog {message.text}", reply_markup=Markups.default_markup)
+        await message.answer(Strings.DELETED_WATCHDOG_MESSAGE(message.text), reply_markup=Markups.default_markup)
 
 
     async def __process_type(self, message: types.Message, state: FSMContext):
-        if message.text == "Polling (ping)":
+        if message.text == Strings.POLLING:
             is_push = False
-        elif message.text == "Push (http)":
+        elif message.text == Strings.PUSH:
             is_push = True
         else:
-            await message.reply(f"Please select a type from below\n", reply_markup=Markups.select_type_markup)
+            await message.reply(Strings.INPUT_TYPE, reply_markup=Markups.select_type_markup)
             return
 
         if is_push:    
@@ -237,10 +238,12 @@ class MainBot:
                     
                     logger.debug(f"Created {w}")
                     
-                    await message.answer(f"Created watchdog {w.name}\n\nMake a POST request to\n<code>{Configuration.BASE_URL}/update/{str(w.uuid)}</code> every 2 minutes", reply_markup=Markups.default_markup, parse_mode='HTML')
+                    url = Configuration.BASE_URL + "/update/" + str(w.uuid)
+                    await message.answer(Strings.CREATED_PUSH_WATCHDOG_MESSAGE(w.name, w.uuid), reply_markup=Markups.default_markup, parse_mode='HTML')
                 
                 except WatchdogsLimitExceededException:
-                    await message.answer(f"You've rechead watchdogs number limit ({Configuration.WATCHDOGS_LIMIT_FOR_USER})\n", reply_markup=Markups.default_markup)
+                    limit = Configuration.WATCHDOGS_LIMIT_FOR_USER
+                    await message.answer(Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit), reply_markup=Markups.default_markup)
             
             # reset state
             await state.finish()
@@ -248,12 +251,12 @@ class MainBot:
         else:
             await WatchdogCreation.address.set()
 
-            await message.answer("Please write address (ip or hostname)", reply_markup=Markups.cancel_markup)
+            await message.answer(Strings.INPUT_ADDRESS, reply_markup=Markups.cancel_markup)
 
     async def __process_address(self, message: types.Message, state: FSMContext):
         
         if not is_valid_address(message.text):
-            await message.answer(f"{message.text} is not a valid address\n", reply_markup=Markups.cancel_markup)
+            await message.answer(Strings.ERROR_INVALID_ADDRESS(message.text), reply_markup=Markups.cancel_markup)
             return
 
         async with state.proxy() as data:
@@ -264,17 +267,18 @@ class MainBot:
             w = self.__db.add_ping_watchdog(data['name'], data['address'], message.chat.id)
             
             logger.debug(f"Created {w}")
-            await message.answer(f"Created watchdog {w.name}", reply_markup=Markups.default_markup)
+            await message.answer(Strings.CREATED_PING_WATCHDOG_MESSAGE(data['name'], data['address']), reply_markup=Markups.default_markup)
         except WatchdogsLimitExceededException:
-            await message.answer(f"You've rechead watchdogs number limit ({Configuration.WATCHDOGS_LIMIT_FOR_USER})", reply_markup=Markups.default_markup)
+            limit = Configuration.WATCHDOGS_LIMIT_FOR_USER
+            await message.answer(Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit), reply_markup=Markups.default_markup)
         except WatchdogDuplicateException:
-            await message.answer(f"Duplicate watchdogs name error", reply_markup=Markups.cancel_markup)
+            await message.answer(Strings.ERROR_WATCHDOG_DUPLICATE(data['name']), reply_markup=Markups.cancel_markup)
 
     async def __process_name(self, message: types.Message, state: FSMContext):
         truncated_name = message.text[:64]
         
         if self.__db.is_name_duplicated(name=truncated_name, chat_id=message.chat.id):
-            await message.answer(f"You already have a watchdog named {truncated_name}", reply_markup=Markups.cancel_markup)
+            await message.answer(Strings.ERROR_WATCHDOG_DUPLICATE(truncated_name), reply_markup=Markups.cancel_markup)
             return
         
         async with state.proxy() as data:
@@ -283,7 +287,7 @@ class MainBot:
         # Set state
         await WatchdogCreation.type.set()
 
-        await message.answer("Please select the watchdog type you prefer", reply_markup=Markups.select_type_markup)
+        await message.answer(Strings.INPUT_TYPE, reply_markup=Markups.select_type_markup)
 
     async def __cancel_handler(self, message: types.Message, state: FSMContext):
         """
@@ -299,7 +303,7 @@ class MainBot:
         await state.finish()
 
         # And remove keyboard
-        await message.answer('Cancelled', reply_markup=Markups.default_markup)
+        await message.answer(Strings.CANCELLED, reply_markup=Markups.default_markup)
 
     def __exception_handler(self, loop, context):
         ex = context.get('exception')
