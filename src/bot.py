@@ -1,4 +1,5 @@
-from utils import get_logger, is_valid_address
+from utils import get_logger, is_valid_address, time_delta_to_string
+from aiogram.utils.exceptions import BotBlocked, TelegramAPIError, RetryAfter
 from configuration import Configuration
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters import Text
@@ -141,7 +142,7 @@ class MainBot:
         if last_update is not None:
             total_seconds = (datetime.now() - last_update).total_seconds()
             
-            down_for = f"{int(total_seconds//86400)}d {int((total_seconds%86400)//3600)}h {int((total_seconds%3600)//60)}m"
+            down_for = time_delta_to_string(total_seconds)
             
             self.__send_message_to_user(watchdog.chat_id, f"🟢 {watchdog.name} is back ONLINE\n\nIt\'s been down for {down_for}")
         else:
@@ -300,12 +301,25 @@ class MainBot:
         # And remove keyboard
         await message.answer('Cancelled', reply_markup=Markups.default_markup)
 
+    def __exception_handler(self, loop, context):
+        ex = context.get('exception')
+
+        if isinstance(ex, BotBlocked):
+            logger.info(f"Bot blocked by user")
+        elif isinstance(ex, TelegramAPIError):
+            logger.warn(f"Telegram API error: {ex}")
+        elif isinstance(ex, RetryAfter):
+            logger.warn(f"API Flooded: {ex}")
+        else:
+            logger.error(f"Exception occured: {context['message']}")
+
     def run(self):
         global bot_loop
         bot_loop = asyncio.get_event_loop()
+        bot_loop.set_exception_handler(self.__exception_handler)
         try:
             logger.info("Starting")
-            executor.start_polling(self.__dp)
+            executor.start_polling(self.__dp, loop=bot_loop)
         except Exception as e:
             logger.error(f"Cannot start: {e}")
             os._exit(1)

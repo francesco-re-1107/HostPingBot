@@ -80,3 +80,19 @@ def is_valid_address(address):
         return not ip.is_private #private ips are not allowed
     except ValueError:
         return dns_resolves(address) # it's a hostname
+
+def time_delta_to_string(seconds):
+    """
+    Converts a time delta in seconds to a string of the form "Xd Yh Zm"
+    where X are days, Y are hours and Z are minutes
+    """
+    minutes = seconds//60
+    hours = minutes//60
+    days = hours//24
+
+    if seconds < 3600:
+        return f"{minutes}m"
+    elif seconds < 86400:
+        return f"{hours}h {minutes}m"
+    else:
+        return f"{days}d {hours}h {minutes}m"
