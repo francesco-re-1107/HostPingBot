@@ -93,6 +93,6 @@ def time_delta_to_string(seconds):
     if seconds < 3600:
         return f"{minutes}m"
     elif seconds < 86400:
-        return f"{hours}h {minutes}m"
+        return f"{hours}h {minutes%60}m"
     else:
-        return f"{days}d {hours}h {minutes}m"
+        return f"{days}d {hours%24}h {minutes%60}m"
