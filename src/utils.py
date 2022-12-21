@@ -86,6 +86,7 @@ def time_delta_to_string(seconds):
     Converts a time delta in seconds to a string of the form "Xd Yh Zm"
     where X are days, Y are hours and Z are minutes
     """
+    seconds = int(seconds)
     minutes = seconds//60
     hours = minutes//60
     days = hours//24
