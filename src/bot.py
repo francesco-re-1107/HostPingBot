@@ -183,9 +183,9 @@ class MainBot:
         for w in watchdogs_list:
             if w.is_push:
                 url = Configuration.BASE_URL + "/update/" + str(w.uuid)
-                summary += Strings.LIST_WATCHDOGS_PUSH_ITEM(w.name, url, bool(w.is_offline), w.last_update)
+                summary += Strings.LIST_WATCHDOGS_PUSH_ITEM(w.name, url, not bool(w.is_offline), w.last_update)
             else:
-                summary += Strings.LIST_WATCHDOGS_PING_ITEM(w.name, w.address, bool(w.is_offline))
+                summary += Strings.LIST_WATCHDOGS_PING_ITEM(w.name, w.address, not bool(w.is_offline))
         
         await message.answer(summary, parse_mode="HTML", reply_markup=Markups.default(message))
 
