@@ -217,13 +217,16 @@ class MainBot:
         for w in watchdogs:
             list_markup.add(w.name)
 
-
         await WatchdogDeletion.select.set()
 
         await message.answer(Strings.INPUT_DELETE_WATCHDOG, reply_markup=list_markup)
     
     async def __delete_selected_watchdog(self, message: types.Message, state: FSMContext):
-        self.__db.delete_watchdog_for_user(chat_id=message.chat.id, name=message.text)
+        deleted = self.__db.delete_watchdog_for_user(chat_id=message.chat.id, name=message.text)
+
+        if not deleted:
+            await message.answer(Strings.ERROR_DELETING_WATCHDOG, reply_markup=Markups.default(message))
+            return
 
         await state.finish()
 
@@ -247,7 +250,7 @@ class MainBot:
                     logger.debug(f"Created {w}")
                     
                     url = Configuration.BASE_URL + "/update/" + str(w.uuid)
-                    await message.answer(Strings.CREATED_PUSH_WATCHDOG_MESSAGE(w.name, w.uuid), reply_markup=Markups.default(message), parse_mode='HTML')
+                    await message.answer(Strings.CREATED_PUSH_WATCHDOG_MESSAGE(w.name, url), reply_markup=Markups.default(message), parse_mode='HTML')
                 
                 except WatchdogsLimitExceededException:
                     limit = Configuration.WATCHDOGS_LIMIT_FOR_USER

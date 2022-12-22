@@ -84,7 +84,7 @@ class Db:
         return Watchdog.delete_by_id(uuid)
     
     def delete_watchdog_for_user(self, chat_id, name):
-        Watchdog.delete().where(Watchdog.chat_id == chat_id, Watchdog.name == name).execute()
+        return Watchdog.delete().where(Watchdog.chat_id == chat_id, Watchdog.name == name).execute() > 0
 
     def get_new_offline_hosts(self):
         """

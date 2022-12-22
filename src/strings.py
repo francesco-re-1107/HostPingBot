@@ -38,3 +38,4 @@ class Strings():
     ERROR_WATCHDOGS_LIMIT_EXCEEDED = lambda limit: f"❌ You can't add more than {limit} watchdogs"
     ERROR_WATCHDOG_DUPLICATE = lambda name: f"❌ You already have a watchdog named {name}"
     ERROR_INVALID_ADDRESS = lambda addr: f"❌ {addr} is not a valid address"
+    ERROR_DELETING_WATCHDOG = "❌ The watchdog you selected doesn't exist"
