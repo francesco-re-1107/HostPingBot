@@ -224,12 +224,12 @@ class MainBot:
     
     async def __delete_selected_watchdog(self, message: types.Message, state: FSMContext):
         deleted = self.__db.delete_watchdog_for_user(chat_id=message.chat.id, name=message.text)
-
-        await state.finish()
         
         if not deleted:
             await message.answer(Strings.ERROR_DELETING_WATCHDOG)
             return
+        
+        await state.finish()
 
         await message.answer(Strings.DELETED_WATCHDOG_MESSAGE(message.text), reply_markup=Markups.default(message))
 
