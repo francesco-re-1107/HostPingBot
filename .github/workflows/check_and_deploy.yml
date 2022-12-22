@@ -1,11 +1,26 @@
-name: Deploy
+name: Check & Deploy
 on:
   push:
     branches:
       - main
 jobs:
+  checks:
+    name: "black, pylint and mypy"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - run: pip install --upgrade pip
+      - run: pip install "black<23" pylint==v3.0.0a3 mypy==v0.902
+      - run: black --diff --check $(git ls-files '*.py')
+      - run: pylint --disable=all --enable=unused-import $(git ls-files '*.py')
+      - run: mypy --strict $(git ls-files '*.py')
+
   deploy:
     name: "Deploy to oracle server"
+    needs: checks
     runs-on: ubuntu-latest
     steps:
       - name: Configure SSH
