@@ -171,13 +171,14 @@ class MainBot:
             await message.answer(Strings.NO_WATCHDOGS, reply_markup=Markups.default_markup)
             return
 
-        summary = "Here you can find your watchdogs\n\n"
+        summary = Strings.LIST_WATCHDOGS_HEADER
 
         for w in watchdogs_list:
             if w.is_push:
-                summary += f"{('🟢','🔴')[bool(w.is_offline)]} <b>{w.name}</b>\n🔄 <code>{Configuration.BASE_URL}/update/{str(w.uuid)}</code>\n🕑 Last update: <i>{w.last_update}</i>\n\n"
+                url = Configuration.BASE_URL + "/update/" + str(w.uuid)
+                summary += Strings.LIST_WATCHDOGS_PUSH(w.name, url, bool(w.is_offline), w.last_update)
             else:
-                summary += f"{('🟢','🔴')[bool(w.is_offline)]} <b>{w.name}</b> (<code>{w.address}</code>)\n\n"
+                summary += Strings.LIST_WATCHDOGS_PING(w.name, w.address, bool(w.is_offline))
         
         await message.answer(summary, parse_mode="HTML", reply_markup=Markups.default_markup)
 
@@ -223,9 +224,9 @@ class MainBot:
 
 
     async def __process_type(self, message: types.Message, state: FSMContext):
-        if message.text == Strings.POLLING:
+        if message.text == Strings.TYPE_POLLING:
             is_push = False
-        elif message.text == Strings.PUSH:
+        elif message.text == Strings.TYPE_PUSH:
             is_push = True
         else:
             await message.reply(Strings.INPUT_TYPE, reply_markup=Markups.select_type_markup)
