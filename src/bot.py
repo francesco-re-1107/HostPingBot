@@ -159,7 +159,8 @@ class MainBot:
         """
         This handler will be called when user sends `/start` or `/help` command
         """
-        await message.answer(Strings.WELCOME_MESSAGE, parse_mode="HTML", reply_markup=Markups.default(message))
+        limit = Configuration.WATCHDOGS_LIMIT_FOR_USER
+        await message.answer(Strings.WELCOME_MESSAGE(limit), parse_mode="HTML", reply_markup=Markups.default(message))
     
     async def __send_stats(self, message: types.Message):
         """
@@ -182,9 +183,9 @@ class MainBot:
         for w in watchdogs_list:
             if w.is_push:
                 url = Configuration.BASE_URL + "/update/" + str(w.uuid)
-                summary += Strings.LIST_WATCHDOGS_PUSH(w.name, url, bool(w.is_offline), w.last_update)
+                summary += Strings.LIST_WATCHDOGS_PUSH_ITEM(w.name, url, bool(w.is_offline), w.last_update)
             else:
-                summary += Strings.LIST_WATCHDOGS_PING(w.name, w.address, bool(w.is_offline))
+                summary += Strings.LIST_WATCHDOGS_PING_ITEM(w.name, w.address, bool(w.is_offline))
         
         await message.answer(summary, parse_mode="HTML", reply_markup=Markups.default(message))
 

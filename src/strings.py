@@ -24,7 +24,7 @@ class Strings():
     
     # List
     LIST_WATCHDOGS = "📄 My watchdogs"
-    LIST_WATCHDOGS_HEADER = "📄 My watchdogs"
+    LIST_WATCHDOGS_HEADER = "📄 My watchdogs\n\n"
     LIST_WATCHDOGS_PING_ITEM = lambda name, addr, status: f"{'🟢' if status else '🔴'} <b>{name}</b> (<code>{addr}</code>)\n\n"
     LIST_WATCHDOGS_PUSH_ITEM = lambda name, url, status, last_update: f"{'🟢' if status else '🔴'} <b>{name}</b>\n🔄 <code>{url}</code>\n🕑 Last update: <i>{last_update}</i>\n\n"
 
