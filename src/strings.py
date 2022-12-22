@@ -1,7 +1,7 @@
 
 class Strings():
     # Miscellanous
-    WELCOME_MESSAGE = lambda limit: f"Hello!👋\n\nThis bot lets you monitor up to {limit} hosts. Whenever they go 🔴OFFLINE or 🟢ONLINE I'll send you a notification.\n\nThe following types of monitor are supported:\n\n🔶 <b>Polling (PING)</b>\nA ping is sent to the host every 60 seconds.\n\n🔶 <b>Push (HTTP)</b>\nYour host have to make a POST request to the provided url at least every 2 minutes. If the request is not received within that interval the host will be considered OFFLINE. \n\nThis is an open source project, you can find it <a href='https://github.com/francesco-re-1107/HostPingBot'>here</a> on GitHub."
+    WELCOME_MESSAGE = lambda limit: f"Hello!👋\n\nThis bot lets you monitor up to {limit} hosts. Whenever they go 🔴OFFLINE or 🟢ONLINE I'll send you a notification.\n\nThe following types of watchdogs are supported:\n\n🔶 <b>Polling (PING)</b>\nA ping is sent to the host every 60 seconds.\n\n🔶 <b>Push (HTTP)</b>\nYour host have to make a POST request to the provided url at least every 2 minutes. If the request is not received within that interval the host will be considered OFFLINE. \n\nThis is an open source project, you can find it <a href='https://github.com/francesco-re-1107/HostPingBot'>here</a> on GitHub."
     CANCEL = "❌ Cancel"
     CANCELLED = "❌ Cancelled"
     STATS = "📊 Stats"
@@ -26,7 +26,7 @@ class Strings():
     LIST_WATCHDOGS = "📄 My watchdogs"
     LIST_WATCHDOGS_HEADER = "📄 My watchdogs\n\n"
     LIST_WATCHDOGS_PING_ITEM = lambda name, addr, status: f"{'🟢' if status else '🔴'} <b>{name}</b> (<code>{addr}</code>)\n\n"
-    LIST_WATCHDOGS_PUSH_ITEM = lambda name, url, status, last_update: f"{'🟢' if status else '🔴'} <b>{name}</b>\n🔄 <code>{url}</code>\n🕑 Last update: <i>{last_update}</i>\n\n"
+    LIST_WATCHDOGS_PUSH_ITEM = lambda name, url, status, last_update: f"{'🟢' if status else '🔴'} <b>{name}</b>\n🔄 <code>{url}</code>\n🕑 Last update: <i>{last_update} ago</i>\n\n"
 
     
     # Notifications

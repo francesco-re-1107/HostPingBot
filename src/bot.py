@@ -183,7 +183,8 @@ class MainBot:
         for w in watchdogs_list:
             if w.is_push:
                 url = Configuration.BASE_URL + "/update/" + str(w.uuid)
-                summary += Strings.LIST_WATCHDOGS_PUSH_ITEM(w.name, url, not bool(w.is_offline), w.last_update)
+                last_update = time_delta_to_string((datetime.now() - w.last_update).total_seconds())
+                summary += Strings.LIST_WATCHDOGS_PUSH_ITEM(w.name, url, not bool(w.is_offline), last_update)
             else:
                 summary += Strings.LIST_WATCHDOGS_PING_ITEM(w.name, w.address, not bool(w.is_offline))
         
