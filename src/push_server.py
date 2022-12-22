@@ -10,20 +10,22 @@ import os
 
 logger = get_logger()
 
-class PushServer():
 
+class PushServer:
     def __init__(self, db: Db, bot: MainBot, check_interval=10):
         self.__db = db
         self.__bot = bot
         self.__check_interval = check_interval
 
         self.__app = Flask(__name__)
-        self.__app.add_url_rule('/status', 'status', self.status)
-        self.__app.add_url_rule('/update/<uuid>', 'update', self.update, methods = ['POST'])
+        self.__app.add_url_rule("/status", "status", self.status)
+        self.__app.add_url_rule(
+            "/update/<uuid>", "update", self.update, methods=["POST"]
+        )
         self.__app.register_error_handler(404, self.page_not_found)
 
     def page_not_found(self, error):
-        return 'This route does not exist {}'.format(request.url), 404
+        return "This route does not exist {}".format(request.url), 404
 
     def status(self):
         logger.debug("GET /status")
@@ -31,7 +33,7 @@ class PushServer():
 
     def update(self, uuid):
         logger.debug(f"POST /update/{uuid}")
-        
+
         if not is_valid_uuid4(uuid):
             return "Bad id", 400
 
@@ -42,24 +44,22 @@ class PushServer():
         if not w.is_push:
             return "Bad id (not push)", 400
 
-        if w.is_offline: #host became online
+        if w.is_offline:  # host became online
             self.__bot.notify_online_host(w, last_update=w.last_update)
 
         self.__db.push_update(uuid)
 
         return "OK"
 
-    
     def __check_updates(self):
         logger.debug("Running check")
         hosts = self.__db.get_new_offline_hosts()
         self.__bot.notify_offline_hosts(hosts)
         self.__db.set_watchdogs_offline(hosts)
 
-
     def __schedule_check(self):
         logger.debug(f"Scheduled check every {self.__check_interval} seconds")
-        
+
         while True:
             try:
                 self.__check_updates()

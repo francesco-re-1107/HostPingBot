@@ -2,6 +2,7 @@ from aiogram.dispatcher.filters import Filter
 from aiogram.types import Message
 from configuration import Configuration
 
+
 class IsAdmin(Filter):
     key = "is_admin"
 
