@@ -61,7 +61,9 @@ class MainBot:
         )
 
         self.__dp.register_message_handler(
-            self.__send_stats, IsAdmin(), Text(equals=Strings.STATS, ignore_case=False),
+            self.__send_stats,
+            IsAdmin(),
+            Text(equals=Strings.STATS, ignore_case=False),
         )
 
         self.__dp.register_message_handler(

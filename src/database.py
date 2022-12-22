@@ -99,7 +99,7 @@ class Db:
 
     def get_new_offline_hosts(self):
         """
-        Used by push_server to check which hosts didn't post updates for check_interval seconds  
+        Used by push_server to check which hosts didn't post updates for check_interval seconds
         """
         offline_hosts = Watchdog.select().where(
             (int(round(datetime.now().timestamp())) - Watchdog.last_update)
@@ -122,7 +122,10 @@ class Db:
         """
         return list(
             Watchdog.select()
-            .where(Watchdog.is_enabled == True, Watchdog.is_push == False,)
+            .where(
+                Watchdog.is_enabled == True,
+                Watchdog.is_push == False,
+            )
             .execute()
         )
 
