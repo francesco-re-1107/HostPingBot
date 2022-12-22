@@ -321,6 +321,8 @@ class MainBot:
             logger.warn(f"Telegram API error: {ex}")
         elif isinstance(ex, RetryAfter):
             logger.warn(f"API Flooded: {ex}")
+        elif isinstance(ex, Exception):
+            logger.error(f"Exception occured: {ex}")
         else:
             logger.error(f"Exception occured: {context['message']}")
 
