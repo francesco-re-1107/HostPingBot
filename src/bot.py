@@ -160,7 +160,7 @@ class MainBot:
         This handler will be called when user sends `/start` or `/help` command
         """
         limit = Configuration.WATCHDOGS_LIMIT_FOR_USER
-        await message.answer(Strings.WELCOME_MESSAGE(limit), parse_mode="HTML", reply_markup=Markups.default(message))
+        await message.answer(Strings.WELCOME_MESSAGE(limit), parse_mode="HTML", reply_markup=Markups.default(message), disable_web_page_preview=True)
     
     async def __send_stats(self, message: types.Message):
         """
