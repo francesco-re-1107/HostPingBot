@@ -22,6 +22,12 @@ class Configuration():
     DEBUG = config.getboolean('Other', 'Debug', fallback=False)
     BASE_URL = config.get('PushServer', 'BaseUrl', fallback=f"http://localhost:{PUSH_SERVER_PORT}")
 
+    def is_admin(user_id):
+        if not Configuration.TELEGRAM_ADMIN_USER_ID:
+            return False
+
+        return user_id == Configuration.TELEGRAM_ADMIN_USER_ID
+
 def exit(message):
     print(message)
     os._exit(1)

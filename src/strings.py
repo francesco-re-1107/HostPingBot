@@ -1,17 +1,18 @@
 
 class Strings():
     # Miscellanous
-    WELCOME_MESSAGE = lambda limit: f"Hello!👋\n\nThis bot lets you monitor up to {limit} hosts. Whenever they go 🔴OFFLINE or 🟢ONLINE I'll send you a notification.\nThis is an open source project, you can find it <a href='https://github.com/francesco-re-1107/HostPingBot'>here</a> on GitHub."
+    WELCOME_MESSAGE = lambda limit: f"Hello!👋\n\nThis bot lets you monitor up to {limit} hosts. Whenever they go 🔴OFFLINE or 🟢ONLINE I'll send you a notification.\n\nThe following types of monitor are supported:\n\n🔶 <b>Polling (PING)</b>\nA ping is sent to the host every 60 seconds.\n\n🔶 <b>Push (HTTP)</b>\nYour host have to make a POST request to the provided url at least every 2 minutes. If the request is not received within that interval the host will be considered OFFLINE. \n\nThis is an open source project, you can find it <a href='https://github.com/francesco-re-1107/HostPingBot'>here</a> on GitHub."
     CANCEL = "❌ Cancel"
     CANCELLED = "❌ Cancelled"
+    STATS = "📊 Stats"
 
     # Creation
     NEW_WATCHDOG = "➕ New watchdog"
     INPUT_NAME = "📝 Enter a name for your watchdog"
     INPUT_ADDRESS = "📝 Enter the address (ip or hostname) of the host you want to monitor"
     INPUT_TYPE = "📝 Choose the type of watchdog"
-    TYPE_POLLING = "Polling (ping)"
-    TYPE_PUSH = "Push (http)"
+    TYPE_POLLING = "Polling (PING)"
+    TYPE_PUSH = "Push (HTTP)"
     CREATED_PING_WATCHDOG_MESSAGE = lambda name, addr: f"📄 Created polling watchdog {name} ({addr})"
     CREATED_PUSH_WATCHDOG_MESSAGE = lambda name, url: f"📄 Created push watchdog {name}\n\nMake a POST request to\n<code>{url}</code> at least every 2 minutes"
     

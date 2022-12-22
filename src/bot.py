@@ -59,6 +59,12 @@ class MainBot:
         )
 
         self.__dp.register_message_handler(
+            self.__send_stats, 
+            IsAdmin(), 
+            Text(equals=Strings.STATS, ignore_case=False), 
+        )
+
+        self.__dp.register_message_handler(
             self.__list_watchdogs,
             commands=['list'],
             state='*'
@@ -153,13 +159,13 @@ class MainBot:
         """
         This handler will be called when user sends `/start` or `/help` command
         """
-        await message.answer(Strings.WELCOME_MESSAGE, parse_mode="HTML", reply_markup=Markups.default_markup)
+        await message.answer(Strings.WELCOME_MESSAGE, parse_mode="HTML", reply_markup=Markups.default(message))
     
     async def __send_stats(self, message: types.Message):
         """
         This handler will be called when ADMIN sends `/stats` command
         """
-        await message.answer(self.__db.get_stats(), reply_markup=Markups.default_markup)
+        await message.answer(self.__db.get_stats(), reply_markup=Markups.default(message))
 
     async def __list_watchdogs(self, message: types.Message):
         """
@@ -168,7 +174,7 @@ class MainBot:
         watchdogs_list = self.__db.get_watchdogs_for_user(chat_id=message.chat.id)
 
         if len(watchdogs_list) == 0:
-            await message.answer(Strings.NO_WATCHDOGS, reply_markup=Markups.default_markup)
+            await message.answer(Strings.NO_WATCHDOGS, reply_markup=Markups.default(message))
             return
 
         summary = Strings.LIST_WATCHDOGS_HEADER
@@ -180,7 +186,7 @@ class MainBot:
             else:
                 summary += Strings.LIST_WATCHDOGS_PING(w.name, w.address, bool(w.is_offline))
         
-        await message.answer(summary, parse_mode="HTML", reply_markup=Markups.default_markup)
+        await message.answer(summary, parse_mode="HTML", reply_markup=Markups.default(message))
 
     async def __new_watchdog(self, message: types.Message):
         """
@@ -188,13 +194,13 @@ class MainBot:
         """
         if self.__db.has_reached_limits(chat_id=message.chat.id):
             limit = Configuration.WATCHDOGS_LIMIT_FOR_USER
-            await message.answer(Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit), reply_markup=Markups.default_markup)
+            await message.answer(Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit), reply_markup=Markups.default(message))
             return
 
         # set state
         await WatchdogCreation.name.set()
 
-        await message.answer(Strings.INPUT_NAME, reply_markup=Markups.cancel_markup)
+        await message.answer(Strings.INPUT_NAME, reply_markup=Markups.cancel)
 
     async def __delete_watchdog(self, message: types.Message):
         list_markup = Markups.new()
@@ -202,7 +208,7 @@ class MainBot:
         watchdogs = self.__db.get_watchdogs_for_user(chat_id=message.chat.id)
 
         if len(watchdogs) == 0:
-            await message.answer(Strings.NO_WATCHDOGS, reply_markup=Markups.default_markup)
+            await message.answer(Strings.NO_WATCHDOGS, reply_markup=Markups.default(message))
             return
 
         list_markup.add(Strings.CANCEL)
@@ -220,7 +226,7 @@ class MainBot:
 
         await state.finish()
 
-        await message.answer(Strings.DELETED_WATCHDOG_MESSAGE(message.text), reply_markup=Markups.default_markup)
+        await message.answer(Strings.DELETED_WATCHDOG_MESSAGE(message.text), reply_markup=Markups.default(message))
 
 
     async def __process_type(self, message: types.Message, state: FSMContext):
@@ -229,7 +235,7 @@ class MainBot:
         elif message.text == Strings.TYPE_PUSH:
             is_push = True
         else:
-            await message.reply(Strings.INPUT_TYPE, reply_markup=Markups.select_type_markup)
+            await message.reply(Strings.INPUT_TYPE, reply_markup=Markups.select_type)
             return
 
         if is_push:    
@@ -240,11 +246,11 @@ class MainBot:
                     logger.debug(f"Created {w}")
                     
                     url = Configuration.BASE_URL + "/update/" + str(w.uuid)
-                    await message.answer(Strings.CREATED_PUSH_WATCHDOG_MESSAGE(w.name, w.uuid), reply_markup=Markups.default_markup, parse_mode='HTML')
+                    await message.answer(Strings.CREATED_PUSH_WATCHDOG_MESSAGE(w.name, w.uuid), reply_markup=Markups.default(message), parse_mode='HTML')
                 
                 except WatchdogsLimitExceededException:
                     limit = Configuration.WATCHDOGS_LIMIT_FOR_USER
-                    await message.answer(Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit), reply_markup=Markups.default_markup)
+                    await message.answer(Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit), reply_markup=Markups.default(message))
             
             # reset state
             await state.finish()
@@ -252,12 +258,12 @@ class MainBot:
         else:
             await WatchdogCreation.address.set()
 
-            await message.answer(Strings.INPUT_ADDRESS, reply_markup=Markups.cancel_markup)
+            await message.answer(Strings.INPUT_ADDRESS, reply_markup=Markups.cancel)
 
     async def __process_address(self, message: types.Message, state: FSMContext):
         
         if not is_valid_address(message.text):
-            await message.answer(Strings.ERROR_INVALID_ADDRESS(message.text), reply_markup=Markups.cancel_markup)
+            await message.answer(Strings.ERROR_INVALID_ADDRESS(message.text), reply_markup=Markups.cancel)
             return
 
         async with state.proxy() as data:
@@ -268,18 +274,18 @@ class MainBot:
             w = self.__db.add_ping_watchdog(data['name'], data['address'], message.chat.id)
             
             logger.debug(f"Created {w}")
-            await message.answer(Strings.CREATED_PING_WATCHDOG_MESSAGE(data['name'], data['address']), reply_markup=Markups.default_markup)
+            await message.answer(Strings.CREATED_PING_WATCHDOG_MESSAGE(data['name'], data['address']), reply_markup=Markups.default(message))
         except WatchdogsLimitExceededException:
             limit = Configuration.WATCHDOGS_LIMIT_FOR_USER
-            await message.answer(Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit), reply_markup=Markups.default_markup)
+            await message.answer(Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit), reply_markup=Markups.default(message))
         except WatchdogDuplicateException:
-            await message.answer(Strings.ERROR_WATCHDOG_DUPLICATE(data['name']), reply_markup=Markups.cancel_markup)
+            await message.answer(Strings.ERROR_WATCHDOG_DUPLICATE(data['name']), reply_markup=Markups.cancel)
 
     async def __process_name(self, message: types.Message, state: FSMContext):
         truncated_name = message.text[:64]
         
         if self.__db.is_name_duplicated(name=truncated_name, chat_id=message.chat.id):
-            await message.answer(Strings.ERROR_WATCHDOG_DUPLICATE(truncated_name), reply_markup=Markups.cancel_markup)
+            await message.answer(Strings.ERROR_WATCHDOG_DUPLICATE(truncated_name), reply_markup=Markups.cancel)
             return
         
         async with state.proxy() as data:
@@ -288,7 +294,7 @@ class MainBot:
         # Set state
         await WatchdogCreation.type.set()
 
-        await message.answer(Strings.INPUT_TYPE, reply_markup=Markups.select_type_markup)
+        await message.answer(Strings.INPUT_TYPE, reply_markup=Markups.select_type)
 
     async def __cancel_handler(self, message: types.Message, state: FSMContext):
         """
@@ -304,7 +310,7 @@ class MainBot:
         await state.finish()
 
         # And remove keyboard
-        await message.answer(Strings.CANCELLED, reply_markup=Markups.default_markup)
+        await message.answer(Strings.CANCELLED, reply_markup=Markups.default(message))
 
     def __exception_handler(self, loop, context):
         ex = context.get('exception')
