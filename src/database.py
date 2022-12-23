@@ -161,16 +161,31 @@ class Db:
         Set is_offline to True
         Used by pinger
         """
-        return Watchdog.update(is_offline=True).where(Watchdog.uuid.in_([w.uuid for w in offline_hosts])).execute() is not None
-    
+        return (
+            Watchdog.update(is_offline=True)
+            .where(Watchdog.uuid.in_([w.uuid for w in offline_hosts]))
+            .execute()
+            is not None
+        )
+
     def set_watchdog_online(self, uuid):
-        return Watchdog.update(last_update=datetime.now(), is_offline=False).where(Watchdog.uuid == uuid).execute() is not None
-    
+        return (
+            Watchdog.update(last_update=datetime.now(), is_offline=False)
+            .where(Watchdog.uuid == uuid)
+            .execute()
+            is not None
+        )
+
     def set_watchdogs_online(self, online_hosts):
         """
-        Set is_offline to False and update last_update 
+        Set is_offline to False and update last_update
         """
-        return Watchdog.update(is_offline=False, last_update=datetime.now()).where(Watchdog.uuid.in_([w.uuid for w in online_hosts])).execute() is not None
+        return (
+            Watchdog.update(is_offline=False, last_update=datetime.now())
+            .where(Watchdog.uuid.in_([w.uuid for w in online_hosts]))
+            .execute()
+            is not None
+        )
 
     def get_stats(self):
         return f"Users: {Watchdog.select(Watchdog.chat_id).distinct().count()}\nWatchdogs: {Watchdog.select().count()}\nPing watchdogs: {Watchdog.select().where(Watchdog.is_push == False).count()}\nPush watchdogs: {Watchdog.select().where(Watchdog.is_push == True).count()}"
