@@ -20,7 +20,7 @@ class Strings:
         lambda name, addr: f"📄 Created polling watchdog {name} (<code>{addr}</code>)"
     )
     CREATED_PUSH_WATCHDOG_MESSAGE = (
-        lambda name, url: f"📄 Created push watchdog {name}\n\nMake a POST request to\n<code>{url}</code> at least every 2 minutes"
+        lambda name, url: f"📄 Created push watchdog {name}\n\nMake a POST request at least every 2 minutes to the following url\n\n<code>{url}</code>"
     )
 
     # Deletion
@@ -33,12 +33,14 @@ class Strings:
 
     # List
     LIST_WATCHDOGS = "📄 My watchdogs"
-    LIST_WATCHDOGS_HEADER = "📄 My watchdogs\n\n"
+    LIST_WATCHDOGS_HEADER = "My watchdogs\n\n"
+    LIST_WATCHDOGS_PING_HEADER = "🔶 <b>Polling (PING)</b>\n\n"
+    LIST_WATCHDOGS_PUSH_HEADER = "🔶 <b>Push (HTTP)</b>\n\n"
     LIST_WATCHDOGS_PING_ITEM = (
-        lambda name, addr, status, last_update: f"{'🟢' if status else '🔴'} <b>{name}</b> (<code>{addr}</code>)\n🕑 Last update: <i>{last_update} ago</i>\n\n"
+        lambda name, addr, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<code>{addr}</code>\n\t\tLast update: <i>{last_update} ago</i>\n\n"
     )
     LIST_WATCHDOGS_PUSH_ITEM = (
-        lambda name, url, status, last_update: f"{'🟢' if status else '🔴'} <b>{name}</b>\n🔄 <code>{url}</code>\n🕑 Last update: <i>{last_update} ago</i>\n\n"
+        lambda name, url, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<code>{url}</code>\n\t\tLast update: <i>{last_update} ago</i>\n\n"
     )
 
     # Notifications

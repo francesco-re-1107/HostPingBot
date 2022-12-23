@@ -183,19 +183,27 @@ class MainBot:
 
         summary = Strings.LIST_WATCHDOGS_HEADER
 
-        for w in watchdogs_list:
+        summary += Strings.LIST_WATCHDOGS_PING_HEADER
+
+        # Ping
+        for w in [w for w in watchdogs_list if not w.is_push]:
             last_update = time_delta_to_string(
                 (datetime.now() - w.last_update).total_seconds()
             )
-            if w.is_push:
-                url = Configuration.BASE_URL + "/update/" + str(w.uuid)
-                summary += Strings.LIST_WATCHDOGS_PUSH_ITEM(
-                    w.name, url, not bool(w.is_offline), last_update
-                )
-            else:
-                summary += Strings.LIST_WATCHDOGS_PING_ITEM(
-                    w.name, w.address, not bool(w.is_offline), last_update
-                )
+            summary += Strings.LIST_WATCHDOGS_PING_ITEM(
+                w.name, w.address, not bool(w.is_offline), last_update
+            )
+
+        summary += Strings.LIST_WATCHDOGS_PUSH_HEADER
+        # Push
+        for w in [w for w in watchdogs_list if w.is_push]:
+            last_update = time_delta_to_string(
+                (datetime.now() - w.last_update).total_seconds()
+            )
+            url = Configuration.BASE_URL + "/update/" + str(w.uuid)
+            summary += Strings.LIST_WATCHDOGS_PUSH_ITEM(
+                w.name, url, not bool(w.is_offline), last_update
+            )
 
         await message.answer(
             summary, parse_mode="HTML", reply_markup=Markups.default(message)
