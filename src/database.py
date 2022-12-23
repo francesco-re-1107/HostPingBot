@@ -136,7 +136,7 @@ class Db:
         return (
             Watchdog.select()
             .where(Watchdog.chat_id == chat_id)
-            .order_by(Watchdog.name.asc())
+            .order_by(Watchdog.is_push.asc(), Watchdog.name.asc())
         )
 
     def has_reached_limits(self, chat_id):
