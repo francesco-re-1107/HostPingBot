@@ -316,6 +316,7 @@ class MainBot:
             logger.debug(f"Created {w}")
             await message.answer(
                 Strings.CREATED_PING_WATCHDOG_MESSAGE(data["name"], data["address"]),
+                parse_mode="HTML",
                 reply_markup=Markups.default(message),
             )
         except WatchdogsLimitExceededException:

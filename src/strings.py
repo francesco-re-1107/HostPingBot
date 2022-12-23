@@ -17,7 +17,7 @@ class Strings:
     TYPE_POLLING = "Polling (PING)"
     TYPE_PUSH = "Push (HTTP)"
     CREATED_PING_WATCHDOG_MESSAGE = (
-        lambda name, addr: f"📄 Created polling watchdog {name} ({addr})"
+        lambda name, addr: f"📄 Created polling watchdog {name} (<code>{addr}</code>)"
     )
     CREATED_PUSH_WATCHDOG_MESSAGE = (
         lambda name, url: f"📄 Created push watchdog {name}\n\nMake a POST request to\n<code>{url}</code> at least every 2 minutes"
