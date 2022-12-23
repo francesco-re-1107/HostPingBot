@@ -7,6 +7,7 @@ from utils import get_logger
 
 logger = get_logger()
 
+
 def main():
     db = Db()
     bot = MainBot(db)
@@ -19,6 +20,7 @@ def main():
         logger.error("Error in bot")
         logger.error(e)
         os._exit(1)
+
 
 if __name__ == "__main__":
     main()
