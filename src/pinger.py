@@ -80,10 +80,11 @@ class Pinger:
 
                     for h in online_hosts:
                         if h.is_offline:  # host became online
-                            self.__bot.notify_online_host(h)
-                            self.__db.set_watchdog_online(h)
+                            self.__bot.notify_online_host(h, h.last_update)
 
                         hosts_to_ping.remove(h)
+
+                    self.__db.set_watchdogs_online(online_hosts)
 
                     if len(hosts_to_ping) == 0:
                         break

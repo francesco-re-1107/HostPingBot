@@ -17,10 +17,10 @@ class Strings:
     TYPE_POLLING = "Polling (PING)"
     TYPE_PUSH = "Push (HTTP)"
     CREATED_PING_WATCHDOG_MESSAGE = (
-        lambda name, addr: f"📄 Created polling watchdog {name} ({addr})"
+        lambda name, addr: f"📄 Created polling watchdog {name} (<code>{addr}</code>)"
     )
     CREATED_PUSH_WATCHDOG_MESSAGE = (
-        lambda name, url: f"📄 Created push watchdog {name}\n\nMake a POST request to\n<code>{url}</code> at least every 2 minutes"
+        lambda name, url: f"📄 Created push watchdog {name}\n\nMake a POST request at least every 2 minutes to the following url\n\n<code>{url}</code>"
     )
 
     # Deletion
@@ -33,19 +33,21 @@ class Strings:
 
     # List
     LIST_WATCHDOGS = "📄 My watchdogs"
-    LIST_WATCHDOGS_HEADER = "📄 My watchdogs\n\n"
+    LIST_WATCHDOGS_HEADER = "My watchdogs\n\n"
+    LIST_WATCHDOGS_PING_HEADER = "🔶 <b>Polling (PING)</b>\n\n"
+    LIST_WATCHDOGS_PUSH_HEADER = "🔶 <b>Push (HTTP)</b>\n\n"
     LIST_WATCHDOGS_PING_ITEM = (
-        lambda name, addr, status: f"{'🟢' if status else '🔴'} <b>{name}</b> (<code>{addr}</code>)\n\n"
+        lambda name, addr, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<code>{addr}</code>\n\t\tLast update: <i>{last_update} ago</i>\n\n"
     )
     LIST_WATCHDOGS_PUSH_ITEM = (
-        lambda name, url, status, last_update: f"{'🟢' if status else '🔴'} <b>{name}</b>\n🔄 <code>{url}</code>\n🕑 Last update: <i>{last_update} ago</i>\n\n"
+        lambda name, url, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<code>{url}</code>\n\t\tLast update: <i>{last_update} ago</i>\n\n"
     )
 
     # Notifications
-    OFFLINE_MESSAGE = lambda name: f"🔴 {name} is OFFLINE right now"
-    ONLINE_MESSAGE = lambda name: f"🟢 {name} is back ONLINE"
+    OFFLINE_MESSAGE = lambda name: f"<b>[🔴] {name}</b> is OFFLINE right now"
+    ONLINE_MESSAGE = lambda name: f"<b>[🟢] {name}</b> is back ONLINE"
     ONLINE_MESSAGE_WITH_TIME = (
-        lambda name, down_for: f"🟢 {name} is back ONLINE\n\nIt's been down for {down_for}"
+        lambda name, down_for: f"<b>[🟢] {name}</b> is back ONLINE\n\nIt's been down for {down_for}"
     )
 
     # Errors

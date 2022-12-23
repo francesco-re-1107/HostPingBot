@@ -136,7 +136,7 @@ class Db:
         return (
             Watchdog.select()
             .where(Watchdog.chat_id == chat_id)
-            .order_by(Watchdog.name.asc())
+            .order_by(Watchdog.is_push.asc(), Watchdog.name.asc())
         )
 
     def has_reached_limits(self, chat_id):
@@ -156,14 +156,6 @@ class Db:
             > 0
         )
 
-    def push_update(self, uuid):
-        return (
-            Watchdog.update(last_update=datetime.now(), is_offline=False)
-            .where(Watchdog.uuid == uuid)
-            .execute()
-            is not None
-        )
-
     def set_watchdogs_offline(self, offline_hosts):
         """
         Set is_offline to True
@@ -176,10 +168,21 @@ class Db:
             is not None
         )
 
-    def set_watchdog_online(self, watchdog):
+    def set_watchdog_online(self, uuid):
         return (
-            Watchdog.update(is_offline=False)
-            .where(Watchdog.uuid == watchdog.uuid)
+            Watchdog.update(last_update=datetime.now(), is_offline=False)
+            .where(Watchdog.uuid == uuid)
+            .execute()
+            is not None
+        )
+
+    def set_watchdogs_online(self, online_hosts):
+        """
+        Set is_offline to False and update last_update
+        """
+        return (
+            Watchdog.update(is_offline=False, last_update=datetime.now())
+            .where(Watchdog.uuid.in_([w.uuid for w in online_hosts]))
             .execute()
             is not None
         )

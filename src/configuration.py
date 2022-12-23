@@ -2,7 +2,7 @@ import configparser
 import os
 
 config = configparser.ConfigParser()
-config.read("/etc/hostpingbot/config.ini")
+config.read(["/etc/hostpingbot/config.ini", "config.ini", "../config.ini"])
 
 if "Telegram" not in config:
     exit("Telegram config not found in config.ini")
@@ -13,14 +13,10 @@ if "Database" not in config:
 
 class Configuration:
     DATABASE_HOST = config.get("Database", "Host", fallback=None) or "localhost"
-    DATABASE_USER = config.get("Database", "User", fallback=None) or exit(
-        "Database user not found"
-    )
-    DATABASE_PASSWORD = config.get("Database", "Password", fallback=None) or exit(
-        "Database password not found"
-    )
+    DATABASE_USER = config.get("Database", "User", fallback=None) or ""
+    DATABASE_PASSWORD = config.get("Database", "Password", fallback=None) or ""
     TELEGRAM_BOT_TOKEN = config.get("Telegram", "Token", fallback=None) or exit(
-        "Telegram token not found"
+        "Telegram token not found in config.ini"
     )
     TELEGRAM_ADMIN_USER_ID = config.get("Telegram", "AdminUserId", fallback=None)
     PUSH_SERVER_PORT = config.getint("PushServer", "Port", fallback=5000)
