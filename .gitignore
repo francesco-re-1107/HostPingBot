@@ -156,3 +156,5 @@ cython_debug/
 .vscode
 setup_env.sh
 config.ini
+.scannerwork/.sonar_lock
+.scannerwork/report-task.txt
