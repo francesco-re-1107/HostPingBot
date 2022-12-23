@@ -2,7 +2,7 @@ import configparser
 import os
 
 config = configparser.ConfigParser()
-config.read("/etc/hostpingbot/config.ini")
+config.read(["/etc/hostpingbot/config.ini", "config.ini", "../config.ini"])
 
 if "Telegram" not in config:
     exit("Telegram config not found in config.ini")
