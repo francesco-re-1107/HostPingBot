@@ -44,10 +44,10 @@ class Strings:
     )
 
     # Notifications
-    OFFLINE_MESSAGE = lambda name: f"🔴 {name} is OFFLINE right now"
-    ONLINE_MESSAGE = lambda name: f"🟢 {name} is back ONLINE"
+    OFFLINE_MESSAGE = lambda name: f"<b>[🔴] {name}</b> is OFFLINE right now"
+    ONLINE_MESSAGE = lambda name: f"<b>[🟢] {name}</b> is back ONLINE"
     ONLINE_MESSAGE_WITH_TIME = (
-        lambda name, down_for: f"🟢 {name} is back ONLINE\n\nIt's been down for {down_for}"
+        lambda name, down_for: f"<b>[🟢] {name}</b> is back ONLINE\n\nIt's been down for {down_for}"
     )
 
     # Errors

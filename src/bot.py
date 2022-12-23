@@ -123,7 +123,7 @@ class MainBot:
         )
 
     def __send_message_to_user(self, chat_id, message):
-        bot_loop.create_task(self.__bot.send_message(chat_id, message))
+        bot_loop.create_task(self.__bot.send_message(chat_id, message, parse_mode="HTML"))
 
     def notify_offline_host(self, watchdog):
         self.__send_message_to_user(
@@ -142,7 +142,7 @@ class MainBot:
 
             self.__send_message_to_user(
                 watchdog.chat_id,
-                Strings.ONLINE_MESSAGE_WITH_TIME(watchdog.name, down_for),
+                Strings.ONLINE_MESSAGE_WITH_TIME(watchdog.name, down_for)
             )
         else:
             self.__send_message_to_user(
