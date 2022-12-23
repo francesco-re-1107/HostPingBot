@@ -313,6 +313,8 @@ class MainBot:
         async with state.proxy() as data:
             data["address"] = message.text
 
+        await state.finish()
+        
         try:
             logger.debug(
                 f"Creating watchdog with name {data['name']} and address {data['address']} for user {message.chat.id}"
@@ -333,10 +335,10 @@ class MainBot:
                 Strings.ERROR_WATCHDOGS_LIMIT_EXCEEDED(limit),
                 reply_markup=Markups.default(message),
             )
-        except WatchdogDuplicateException:
+        except WatchdogDuplicateException:            
             await message.answer(
                 Strings.ERROR_WATCHDOG_DUPLICATE(data["name"]),
-                reply_markup=Markups.cancel,
+                reply_markup=Markups.default(message),
             )
 
     async def __process_name(self, message: types.Message, state: FSMContext):
