@@ -47,7 +47,7 @@ class PushServer:
         if w.is_offline:  # host became online
             self.__bot.notify_online_host(w, last_update=w.last_update)
 
-        self.__db.push_update(uuid)
+        self.__db.set_watchdog_online(uuid)
 
         return "OK"
 
