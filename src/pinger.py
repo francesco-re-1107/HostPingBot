@@ -63,8 +63,13 @@ class Pinger:
         while retries < 5:
             try:
                 for _ in range(self.__offline_repeat_count):
+                    current_iteration_hosts = [h for h in hosts_to_ping if dns_resolves(h.address)]
+
+                    if len(current_iteration_hosts) == 0:
+                        break
+
                     results = multiping(
-                        [h.address for h in hosts_to_ping if dns_resolves(h.address)],
+                        map(lambda h: h.address, current_iteration_hosts),
                         count=self.__p_count,
                         interval=self.__p_interval,
                         concurrent_tasks=self.__p_concurrent_tasks,
@@ -76,7 +81,7 @@ class Pinger:
 
                     for i, r in enumerate(results):
                         if r.is_alive:
-                            online_hosts.append(hosts_to_ping[i])
+                            online_hosts.append(current_iteration_hosts[i])
 
                     for h in online_hosts:
                         if h.is_offline:  # host became online
@@ -85,9 +90,6 @@ class Pinger:
                         hosts_to_ping.remove(h)
 
                     self.__db.set_watchdogs_online(online_hosts)
-
-                    if len(hosts_to_ping) == 0:
-                        break
                 break
             except NameLookupError as e:
                 logger.error(f"NameLookupError {e}")
@@ -103,6 +105,8 @@ class Pinger:
             new_offline_hosts = [h for h in hosts_to_ping if not h.is_offline]
             self.__bot.notify_offline_hosts(new_offline_hosts)
             self.__db.set_watchdogs_offline(new_offline_hosts)
+        else:
+            logger.debug("All hosts are online")
 
     def __fetch_hosts(self):
         self.__hosts = self.__db.get_hosts_to_ping()

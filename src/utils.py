@@ -1,9 +1,9 @@
 from ipaddress import ip_address
+from icmplib import resolve, NameLookupError
 import logging
 from logging.handlers import RotatingFileHandler
 import os
 import sys
-import socket
 from uuid import uuid4, UUID
 from configuration import Configuration
 
@@ -73,11 +73,9 @@ def is_valid_uuid4(uuid_string):
 
 def dns_resolves(hostname):
     try:
-        ip = ip_address(socket.gethostbyname(hostname))
+        ip = ip_address(resolve(hostname)[0])
         return not ip.is_private  # for hostnames like localhost
-    except socket.error:  # dns error
-        return False
-    except ValueError:  # the returned ip is not valid
+    except Exception as e:  # the returned ip is not valid
         return False
 
 
