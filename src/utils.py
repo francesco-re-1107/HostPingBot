@@ -73,9 +73,9 @@ def is_valid_uuid4(uuid_string):
 
 def dns_resolves(hostname):
     try:
-        ip = ip_address(resolve(hostname))
+        ip = ip_address(resolve(hostname)[0])
         return not ip.is_private  # for hostnames like localhost
-    except Exception:  # the returned ip is not valid
+    except Exception as e:  # the returned ip is not valid
         return False
 
 
