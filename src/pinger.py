@@ -3,7 +3,7 @@ from icmplib import multiping
 from icmplib import NameLookupError
 import time
 from threading import Thread
-from utils import get_logger
+from utils import get_logger, dns_resolves
 from database import Db
 from bot import MainBot
 import os
@@ -64,7 +64,7 @@ class Pinger:
             try:
                 for _ in range(self.__offline_repeat_count):
                     results = multiping(
-                        [h.address for h in hosts_to_ping],
+                        [h.address for h in hosts_to_ping if dns_resolves(h.address)],
                         count=self.__p_count,
                         interval=self.__p_interval,
                         concurrent_tasks=self.__p_concurrent_tasks,
@@ -90,7 +90,7 @@ class Pinger:
                         break
                 break
             except NameLookupError as e:
-                logger.error("NameLookupError")
+                logger.error(f"NameLookupError {e}")
                 retries += 1
             except Exception as e:
                 logger.error(e)
