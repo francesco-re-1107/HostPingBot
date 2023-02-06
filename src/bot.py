@@ -187,26 +187,32 @@ class MainBot:
 
         # Ping
         for w in [w for w in watchdogs_list if not w.is_push]:
+            status_url = Configuration.BASE_URL + "/status/" + str(w.uuid)
+            badge_url = Configuration.BASE_URL + "/badge/" + str(w.uuid)
+
             last_update = time_delta_to_string(
                 (datetime.now() - w.last_update).total_seconds()
             )
             summary += Strings.LIST_WATCHDOGS_PING_ITEM(
-                w.name, w.address, not bool(w.is_offline), last_update
+                w.name, w.address, status_url, badge_url, not bool(w.is_offline), last_update
             )
 
         summary += Strings.LIST_WATCHDOGS_PUSH_HEADER
         # Push
         for w in [w for w in watchdogs_list if w.is_push]:
+            status_url = Configuration.BASE_URL + "/status/" + str(w.uuid)
+            badge_url = Configuration.BASE_URL + "/badge/" + str(w.uuid)
+
             last_update = time_delta_to_string(
                 (datetime.now() - w.last_update).total_seconds()
             )
-            url = Configuration.BASE_URL + "/update/" + str(w.uuid)
+            push_url = Configuration.BASE_URL + "/update/" + str(w.uuid)
             summary += Strings.LIST_WATCHDOGS_PUSH_ITEM(
-                w.name, url, not bool(w.is_offline), last_update
+                w.name, push_url, status_url, badge_url, not bool(w.is_offline), last_update
             )
 
         await message.answer(
-            summary, parse_mode="HTML", reply_markup=Markups.default(message)
+            summary, parse_mode="HTML", reply_markup=Markups.default(message), disable_web_page_preview=True,
         )
 
     async def __new_watchdog(self, message: types.Message):

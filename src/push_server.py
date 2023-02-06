@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_file
 from utils import get_logger, is_valid_uuid4
 from configuration import Configuration
 from threading import Thread
@@ -10,6 +10,7 @@ import os
 
 logger = get_logger()
 
+NO_CACHE_HEADERS = {"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"}
 
 class PushServer:
     def __init__(self, db: Db, bot: MainBot, check_interval=10):
@@ -18,18 +19,48 @@ class PushServer:
         self.__check_interval = check_interval
 
         self.__app = Flask(__name__)
-        self.__app.add_url_rule("/status", "status", self.status)
+        self.__app.add_url_rule("/status/<uuid>", "status", self.status)
+        self.__app.add_url_rule("/badge/<uuid>", "badge", self.badge, )
         self.__app.add_url_rule(
             "/update/<uuid>", "update", self.update, methods=["POST"]
         )
         self.__app.register_error_handler(404, self.page_not_found)
 
     def page_not_found(self, error):
-        return "This route does not exist {}".format(request.url), 404
+        return "This page does not exist {}".format(request.url), 404
 
-    def status(self):
-        logger.debug("GET /status")
-        return "OK - bot"
+    def status(self, uuid):
+        logger.debug(f"GET /status/{uuid}")
+        
+        if not is_valid_uuid4(uuid):
+            return "Bad id", 400
+
+        w = self.__db.get_watchdog(uuid)
+        if not w:
+            return "Bad id", 400
+
+        result = {
+            "id": uuid,
+            "online": not w.is_offline
+        }
+
+        return result, 200, NO_CACHE_HEADERS
+
+    def badge(self, uuid):
+        logger.debug(f"GET /badge/{uuid}")
+
+        if not is_valid_uuid4(uuid):
+            return "Bad id", 400
+
+        w = self.__db.get_watchdog(uuid)
+        if not w:
+            return "Bad id", 400
+
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        filename = "offline.svg" if w.is_offline else "online.svg"
+        filename = os.path.join(current_dir, "static", filename)
+
+        return send_file(filename, mimetype="image/svg+xml"), NO_CACHE_HEADERS
 
     def update(self, uuid):
         logger.debug(f"POST /update/{uuid}")

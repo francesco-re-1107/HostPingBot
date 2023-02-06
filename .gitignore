@@ -159,3 +159,4 @@ config.ini
 .scannerwork/.sonar_lock
 .scannerwork/report-task.txt
 *.sh
+.DS_Store

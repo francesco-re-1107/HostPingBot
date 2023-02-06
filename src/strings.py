@@ -37,10 +37,10 @@ class Strings:
     LIST_WATCHDOGS_PING_HEADER = "🔶 <b>Polling (PING)</b>\n\n"
     LIST_WATCHDOGS_PUSH_HEADER = "🔶 <b>Push (HTTP)</b>\n\n"
     LIST_WATCHDOGS_PING_ITEM = (
-        lambda name, addr, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<code>{addr}</code>\n\t\tLast update: <i>{last_update} ago</i>\n\n"
+        lambda name, addr, status_url, badge_url, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<code>{addr}</code>\n\t\t<a href='{status_url}'>Status API endpoint</a>\n\t\t<a href='{badge_url}'>Badge API endpoint</a>\n\t\tLast update: <i>{last_update} ago</i>\n\n"
     )
     LIST_WATCHDOGS_PUSH_ITEM = (
-        lambda name, url, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<code>{url}</code>\n\t\tLast update: <i>{last_update} ago</i>\n\n"
+        lambda name, push_url, status_url, badge_url, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<a href='{push_url}'>Push API endpoint</a>\n\t\t<a href='{status_url}'>Status API endpoint</a>\n\t\t<a href='{badge_url}'>Badge API endpoint</a>\n\t\tLast update: <i>{last_update} ago</i>\n\n"
     )
 
     # Notifications
