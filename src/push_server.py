@@ -42,7 +42,7 @@ class PushServer:
         result = {
             "id": uuid,
             "name": w.name,
-            "last_update": int(w.last_update.timestamp()),
+            "last_online": int(w.last_update.timestamp()),
             "online": not w.is_offline
         }
 
