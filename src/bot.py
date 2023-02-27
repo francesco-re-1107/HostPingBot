@@ -288,9 +288,10 @@ class MainBot:
 
                     url = Configuration.BASE_URL + "/update/" + str(w.uuid)
                     await message.answer(
-                        Strings.CREATED_PUSH_WATCHDOG_MESSAGE(w.name, url),
+                        Strings.CREATED_PUSH_WATCHDOG_MESSAGE(w.name, url, str(w.uuid)),
                         reply_markup=Markups.default(message),
                         parse_mode="HTML",
+                        disable_web_page_preview=True
                     )
 
                 except WatchdogsLimitExceededException:

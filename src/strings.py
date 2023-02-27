@@ -20,7 +20,7 @@ class Strings:
         lambda name, addr: f"📄 Created polling watchdog {name} (<code>{addr}</code>)"
     )
     CREATED_PUSH_WATCHDOG_MESSAGE = (
-        lambda name, url: f"📄 Created push watchdog {name}\n\nMake a POST request at least every 2 minutes to the following url\n\n<code>{url}</code>"
+        lambda name, url, token: f"📄 Created push watchdog <b>{name}</b>\n\n👉 Make a POST request every minute to the following <a href='{url}'>URL</a>\n\nOR\n\n👉 Run the <a href='https://github.com/francesco-re-1107/HostPingBot-client'>HostPingBot Client</a> container in docker with the following token\n<code>{token}</code>"
     )
 
     # Deletion
