@@ -25,3 +25,5 @@ nano /etc/hostpingbot/config.ini
 python src/main.py
 ```
 
+## HostPingBot Client
+For push watchdogs you can use the docker container [HostPingBot-client](https://github.com/francesco-re-1107/HostPingBot-client)
