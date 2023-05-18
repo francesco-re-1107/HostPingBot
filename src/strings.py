@@ -1,7 +1,7 @@
 class Strings:
     # Miscellanous
     WELCOME_MESSAGE = (
-        lambda limit: f"Hello!👋\n\nThis bot lets you monitor up to {limit} hosts. Whenever they go 🔴OFFLINE or 🟢ONLINE I'll send you a notification.\n\nThe following types of watchdogs are supported:\n\n🔶 <b>Polling (PING)</b>\nA ping is sent to the host every 60 seconds.\n\n🔶 <b>Push (HTTP)</b>\nYour host have to make a POST request to the provided url at least every 2 minutes. If the request is not received within that interval the host will be considered OFFLINE. \n\nThis is an open source project, you can find it <a href='https://github.com/francesco-re-1107/HostPingBot'>here</a> on GitHub."
+        lambda limit: f"Hello!👋\n\nThis bot lets you monitor up to {limit} hosts. Whenever they go 🔴OFFLINE or 🟢ONLINE I'll send you a notification.\n\nThe following types of watchdogs are supported:\n\n🔶 <b>Polling (PING)</b>\nA ping is sent to the host every 60 seconds.\n\n🔶 <b>Push (HTTP)</b>\nYour host must make a POST request to the provided URL at least every 2 minutes. If the request is not received within that interval the host will be considered OFFLINE. You may want to use the pre-made docker container (<a href='https://github.com/francesco-re-1107/HostPingBot-client'>HostPingBot-client</a>). \n\nThis is an open source project, please leave a ⭐️ <a href='https://github.com/francesco-re-1107/HostPingBot'>on GitHub</a> and report any issue that you experience."
     )
     CANCEL = "❌ Cancel"
     CANCELLED = "❌ Cancelled"
