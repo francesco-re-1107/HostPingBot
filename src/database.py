@@ -168,9 +168,9 @@ class Db:
             is not None
         )
 
-    def set_watchdog_online(self, uuid):
+    def set_watchdog_online(self, uuid, remote_address=None):
         return (
-            Watchdog.update(last_update=datetime.now(), is_offline=False)
+            Watchdog.update(last_update=datetime.now(), address=remote_address, is_offline=False)
             .where(Watchdog.uuid == uuid)
             .execute()
             is not None

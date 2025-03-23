@@ -206,9 +206,10 @@ class MainBot:
             last_update = time_delta_to_string(
                 (datetime.now() - w.last_update).total_seconds()
             )
+            last_remote_address = w.address if w.address else "Unknown"
             push_url = Configuration.BASE_URL + "/update/" + str(w.uuid)
             summary += Strings.LIST_WATCHDOGS_PUSH_ITEM(
-                w.name, push_url, status_url, badge_url, not bool(w.is_offline), last_update
+                w.name, push_url, status_url, badge_url, not bool(w.is_offline), last_update, last_remote_address
             )
 
         await message.answer(

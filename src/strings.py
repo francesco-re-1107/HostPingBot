@@ -40,7 +40,7 @@ class Strings:
         lambda name, addr, status_url, badge_url, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<code>{addr}</code>\n\t\t<a href='{status_url}'>Status API</a>\t|\t<a href='{badge_url}'>Badge API</a>\n\t\tLast online: <i>{last_update} ago</i>\n\n"
     )
     LIST_WATCHDOGS_PUSH_ITEM = (
-        lambda name, push_url, status_url, badge_url, status, last_update: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<a href='{push_url}'>Push API</a>\n\t\t<a href='{status_url}'>Status API</a>\t|\t<a href='{badge_url}'>Badge API</a>\n\t\tLast online: <i>{last_update} ago</i>\n\n"
+        lambda name, push_url, status_url, badge_url, status, last_update, last_update_ip: f"<b>[{'🟢' if status else '🔴'}] {name}</b>\n\t\t<a href='{push_url}'>Push API</a>\n\t\t<a href='{status_url}'>Status API</a>\t|\t<a href='{badge_url}'>Badge API</a>\n\t\tLast online: <i>{last_update} ago</i>\n\t\tLast update ip: <i>{last_update_ip}</i>\n\n"
     )
 
     # Notifications

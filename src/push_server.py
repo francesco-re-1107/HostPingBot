@@ -80,7 +80,11 @@ class PushServer:
         if w.is_offline:  # host became online
             self.__bot.notify_online_host(w, last_update=w.last_update)
 
-        self.__db.set_watchdog_online(uuid)
+        if request.headers.getlist("X-Forwarded-For"):
+            remote_address = request.headers.getlist("X-Forwarded-For")[0]
+        else:
+            remote_address = request.remote_addr
+        self.__db.set_watchdog_online(uuid, remote_address=remote_address)
 
         return "OK"
 
